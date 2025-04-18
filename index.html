@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Premii - Gang Unit</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+
+
+<div class="container">
+  <h1>Kalkulator Premii</h1>
+
+  <div id="formularz"></div>
+
+  <button onclick="policzPremie()">Oblicz premię</button>
+</div>
+
+<script>
+const cennik = {
+  "Patrol (Screen z dispatcha)": 2000,
+  "Reakcja na marka": 5000,
+  "Cayo/FZ": 10000,
+  "Wezwania": 2000,
+  "Przesłuchanie": 15000,
+  "Napad na biznes": 6000,
+  "Stworzenie teczki": 50000,
+  "Napad na bank": 7000,
+  "Drop, MCL": 25000,
+  "Dealerzy, magazyny": 15000,
+  "Udzial w tasku": 5000,
+  "Aresztowania": 3000,
+  "Pomoc w akademiach itd": 5000
+};
+
+const formularz = document.getElementById("formularz");
+
+for (let akcja in cennik) {
+  formularz.innerHTML += `
+    <div class="akcja">
+      <label>${akcja}</label>
+      <input type="number" id="${akcja}">
+    </div>
+  `;
+}
+
+function policzPremie() {
+  let suma = 0;
+  for (let akcja in cennik) {
+    const ilosc = parseInt(document.getElementById(akcja).value) || 0;
+    suma += ilosc * cennik[akcja];
+  }
+  alert(`Łączna premia: ${suma.toLocaleString()} $`);
+}
+</script>
+
+</body>
+</html>

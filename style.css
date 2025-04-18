@@ -1,0 +1,71 @@
+body {
+    
+    margin: 0;
+    background-color: #111;
+    color: #ccc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
+  }
+
+  .container {
+    background-color: #1c1c1e;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 450px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #3b82f6; /* jasny niebieski */
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+
+  .akcja {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #aaa;
+  }
+
+  input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #2a2a2d;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #eee;
+    font-size: 14px;
+    outline: none;
+  }
+
+  input[type="number"]:focus {
+    border-color: #3b82f6;
+  }
+
+  button {
+    margin-top: 20px;
+    width: 100%;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  }
