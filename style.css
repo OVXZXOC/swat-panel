@@ -1,8 +1,8 @@
 body {
     
     margin: 0;
-    background-color: #111;
-    color: #ccc;
+    background-color: #0c0c0cfd;
+    color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
@@ -12,7 +12,7 @@ body {
   }
 
   .container {
-    background-color: #1c1c1e;
+    background-color: #0f0f0f;
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
@@ -22,7 +22,7 @@ body {
 
   h1 {
     text-align: center;
-    color: #3b82f6; /* jasny niebieski */
+    color: #ffffff; 
     margin-bottom: 30px;
     font-size: 24px;
   }
@@ -35,28 +35,28 @@ body {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #aaa;
+    color: #cacaca;
   }
 
   input[type="number"] {
     width: 100%;
     padding: 10px;
-    background-color: #2a2a2d;
-    border: 1px solid #333;
+    background-color: #303030;
+    border: 1px solid #202020;
     border-radius: 10px;
-    color: #eee;
+    color: #ffffff;
     font-size: 14px;
     outline: none;
   }
 
   input[type="number"]:focus {
-    border-color: #3b82f6;
+    border-color: #ffffff;
   }
 
   button {
     margin-top: 20px;
     width: 100%;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #0e0e0e, #000000);
     color: white;
     padding: 15px;
     border: none;
@@ -67,5 +67,6 @@ body {
   }
 
   button:hover {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #cecece, #ffffff);
+    color: black;
   }
