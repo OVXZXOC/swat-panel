@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -24,8 +23,6 @@
 
     <!-- Cennik -->
     <div id="akcje"></div>
-    
-    <!-- Przycisk "Oblicz premię" poniżej kalkulatora -->
   </form>
 
   <button type="button" onclick="policzPremie()">Oblicz premię</button>
@@ -54,12 +51,11 @@ const formularz = document.getElementById("formularz");
 
 // Tworzymy pola do wyboru na podstawie cennika
 for (let akcja in cennik) {
-  formularz.innerHTML += `
-    <div class="akcja">
+  formularz.innerHTML += 
+    `<div class="akcja">
       <label>${akcja}</label>
-      <input type="number" id="${akcja}">
-    </div>
-  `;
+      <input type="number" id="${akcja}" min="0">
+    </div>`;
 }
 
 function policzPremie() {
@@ -69,7 +65,11 @@ function policzPremie() {
     suma += ilosc * cennik[akcja];
   }
 
-  // Wyświetlamy wynik w oknie alertu
+  // Limit maksymalnej premii
+  if (suma > 200000) {
+    suma = 200000;
+  }
+
   alert(`Łączna premia: ${suma.toLocaleString()} $`);
 
   // Wysyłamy dane do Google Sheets
@@ -77,14 +77,12 @@ function policzPremie() {
   const surname = document.getElementById('surname').value;
   const uid = document.getElementById('uid').value;
 
-  // Przygotowujemy dane do wysłania
   const formData = new FormData();
   formData.append('name', name);
   formData.append('surname', surname);
   formData.append('uid', uid);
   formData.append('bonus', suma);
 
-  // Wysyłamy dane do Google Apps Script (tutaj trzeba podać URL)
   fetch('https://script.google.com/macros/s/AKfycbycF2cObmGSlxavMkO-oFEW1LWRA3YGEebJK_TJF-Vru6igHoW1S8hWhFf3y-aqIhhfSQ/exec', {
     method: 'POST',
     body: formData
