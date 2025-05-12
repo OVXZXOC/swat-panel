@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -5,18 +6,29 @@
   <title>Premie GU</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  
 </head>
 <body>
-
 
 <div class="container">
   <h1>Kalkulator Premii - Gang Unit</h1>
 
-  <div id="formularz"></div>
+  <form id="formularz">
+    <label for="name">Imię:</label>
+    <input type="text" id="name" name="name" required><br><br>
 
-  <button onclick="policzPremie()">Oblicz premię</button>
+    <label for="surname">Nazwisko:</label>
+    <input type="text" id="surname" name="surname" required><br><br>
+
+    <label for="uid">UID:</label>
+    <input type="text" id="uid" name="uid" maxlength="11" pattern="\d{11}" placeholder="999999" required><br><br>
+
+    <!-- Cennik -->
+    <div id="akcje"></div>
+    
+    <!-- Przycisk "Oblicz premię" poniżej kalkulatora -->
+  </form>
+
+  <button type="button" onclick="policzPremie()">Oblicz premię</button>
 </div>
 
 <script>
@@ -40,6 +52,7 @@ const cennik = {
 
 const formularz = document.getElementById("formularz");
 
+// Tworzymy pola do wyboru na podstawie cennika
 for (let akcja in cennik) {
   formularz.innerHTML += `
     <div class="akcja">
@@ -55,7 +68,36 @@ function policzPremie() {
     const ilosc = parseInt(document.getElementById(akcja).value) || 0;
     suma += ilosc * cennik[akcja];
   }
+
+  // Wyświetlamy wynik w oknie alertu
   alert(`Łączna premia: ${suma.toLocaleString()} $`);
+
+  // Wysyłamy dane do Google Sheets
+  const name = document.getElementById('name').value;
+  const surname = document.getElementById('surname').value;
+  const uid = document.getElementById('uid').value;
+
+  // Przygotowujemy dane do wysłania
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('surname', surname);
+  formData.append('uid', uid);
+  formData.append('bonus', suma);
+
+  // Wysyłamy dane do Google Apps Script (tutaj trzeba podać URL)
+  fetch('https://script.google.com/macros/s/AKfycbycF2cObmGSlxavMkO-oFEW1LWRA3YGEebJK_TJF-Vru6igHoW1S8hWhFf3y-aqIhhfSQ/exec', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.text())
+  .then(data => {
+    console.log(data);
+    alert("Dane zostały zapisane w Google Sheets");
+  })
+  .catch(error => {
+    console.error(error);
+    alert("Wystąpił błąd podczas zapisywania danych");
+  });
 }
 </script>
 
