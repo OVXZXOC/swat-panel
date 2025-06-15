@@ -1,72 +1,109 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <title>Gang Unit - Pracownicy</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <title>Kalkulator Premii - Gang Unit</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <button class="toggle-sidebar" aria-label="Toggle sidebar menu">☰</button>
-      <div class="logo">
-        <img src="gu_transparent.png" alt="Logo GU" />
-      </div>
-      <nav class="menu">
-        <a href="#" class="btn active"><i class="fas fa-users"></i> Pracownicy</a>
-        <a href="https://ovxzxoc.github.io/premie-gu/" target="_blank" class="btn"><i class="fas fa-dollar-sign"></i> Premie</a>
-        <a href="https://docs.google.com/spreadsheets/d/1B0WYmdUqnkZE9Gtxqz-pSr3IUmXk-gPmRfbe4dVtkko/" target="_blank" class="btn"><i class="fas fa-database"></i> Baza Danych</a>
-      </nav>
-    </aside>
 
-    <!-- Main -->
-    <main class="main-content">
-      <section class="form-section">
-        <h2>Dodaj pracownika</h2>
-        <form id="employeeForm">
-          <input type="text" id="firstName" placeholder="Imię" required />
-          <input type="text" id="lastName" placeholder="Nazwisko" required />
-          <input type="text" id="idNumber" placeholder="Numer UID" required />
-          <input type="text" id="stopien" placeholder="Stopień" required />
-          <select id="ranga" required>
-            <option value="" disabled selected hidden>Wybierz rangę</option>
-            <option value="01">[01] Unit Commander</option>
-            <option value="02">[02] Unit Commander</option>
-            <option value="03">[03] Unit Commander</option>
-            <option value="Deputy Commander">Deputy Commander</option>
-            <option value="Gang Unit Captain">Gang Unit Captain</option>
-            <option value="Strike Team Leader">Strike Team Leader</option>
-            <option value="Gang Intelligence Officer">Gang Intelligence Officer</option>
-            <option value="Tactical Specialist">Tactical Specialist</option>
-            <option value="Undercover Operative">Undercover Operative</option>
-            <option value="Crime Suppression Officer">Crime Suppression Officer</option>
-            <option value="Enforcer">Enforcer</option>
-            <option value="Recruit">Recruit</option>
-          </select>          
-          <button type="submit">Dodaj</button>
-        </form>
-      </section>
+<div class="container">
+  <h1>Kalkulator Premii - Gang Unit</h1>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Imię</th>
-            <th>Nazwisko</th>
-            <th>Numer</th>
-            <th>Stopień</th>
-            <th id="rankHeader" style="cursor:pointer;">Ranga ▼</th>
-            <th>Akcje</th>
-          </tr>
-        </thead>
-        <tbody id="employeeTableBody">
-          <!-- Wiersze będą dodawane dynamicznie -->
-        </tbody>
-      </table>
-    </main>
+  <!-- Formularz na wpisanie danych -->
+  <div id="formularz"></div>
+
+  <!-- Przyciski i formularz -->
+  <div>
+    <label>Imię: </label>
+    <input type="text" id="imie">
+    <label>Nazwisko: </label>
+    <input type="text" id="nazwisko">
+    <label>UID: </label>
+    <input type="text" id="uid">
   </div>
 
-  <script src="java.js"></script>
+  <div id="formularz">
+    <!-- Automatycznie wygenerowane akcje -->
+  </div>
+
+  <button onclick="policzPremie()">Oblicz premię i wyślij</button>
+</div>
+
+<script>
+// Cennik
+const cennik = {
+  "Patrol (Screen z dispatcha)": 2000,
+  "Reakcja na marka": 5000,
+  "Cayo/FZ": 10000,
+  "Wezwania": 2000,
+  "Przesłuchanie": 15000,
+  "Napad na biznes": 6000,
+  "Stworzenie teczki": 50000,
+  "Napad na bank": 7000,
+  "Drop, MCL": 25000,
+  "Dealerzy, magazyny": 15000,
+  "Udzial w tasku": 5000,
+  "Aresztowania": 3000,
+  "Pomoc w akademiach itd": 5000,
+  "Porwania, Arenki itp": 7000
+};
+
+// URL webhooka z Google Apps Script
+const webhook = "https://script.google.com/macros/s/AKfycbxU6e9S-3l79JHCfwJy3isGrW-2d43xVTGsAL9hTchWzBycAQ6ih9G5tzU3YYFUkzaMfg/exec";
+
+// Wygeneruj formularz z cennikiem
+const formularz = document.getElementById("formularz");
+
+for (let akcja in cennik) {
+  formularz.innerHTML += `
+    <div class="akcja">
+      <label>${akcja}</label>
+      <input type="number" id="${akcja}">
+    </div>
+  `;
+}
+
+// Funkcja do obliczenia premii i wysłania do Google Sheets
+function policzPremie() {
+  let suma = 0;
+  // Zbieramy dane z formularza
+  for (let akcja in cennik) {
+    const ilosc = parseInt(document.getElementById(akcja).value) || 0;
+    suma += ilosc * cennik[akcja];
+  }
+
+  // Zbieramy dane osobowe z formularza
+  const imie = document.getElementById("imie").value;
+  const nazwisko = document.getElementById("nazwisko").value;
+  const uid = document.getElementById("uid").value;
+
+  // Tworzymy obiekt z danymi do wysłania
+  const dane = {
+    imie: imie,
+    nazwisko: nazwisko,
+    uid: uid,
+    premia: suma
+  };
+
+  // Wysyłamy dane do Google Sheets za pomocą fetch
+  fetch(webhook, {
+    method: "POST",
+    body: JSON.stringify(dane),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(response => response.text())
+  .then(data => {
+    alert("Dane zostały wysłane do Google Sheets: " + data);
+  })
+  .catch(err => {
+    console.error("Błąd:", err);
+    alert("Wystąpił błąd podczas wysyłania danych.");
+  });
+}
+</script>
+
 </body>
 </html>
