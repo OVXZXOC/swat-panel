@@ -1,37 +1,38 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Kalkulator Premii - Gang Unit</title>
+ <meta charset="UTF-8">
+  <title>Premie GU</title>
   <link rel="stylesheet" href="style.css">
-</head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="gangunit.ico" type="image/x-icon">
+</head>Add commentMore actions
 <body>
 
 <div class="container">
+  <div class="logo-container">
+    <img src="gu_transparent.png" alt="Logo Gang Unit" class="logo">
+  </div>
+
   <h1>Kalkulator Premii - Gang Unit</h1>
 
-  <!-- Formularz na wpisanie danych -->
-  <div id="formularz"></div>
+  <form id="formularz">
+    <label for="name">Imię:</label>
+    <input type="text" id="name" name="name" required><br><br>
 
-  <!-- Przyciski i formularz -->
-  <div>
-    <label>Imię: </label>
-    <input type="text" id="imie">
-    <label>Nazwisko: </label>
-    <input type="text" id="nazwisko">
-    <label>UID: </label>
-    <input type="text" id="uid">
-  </div>
+    <label for="surname">Nazwisko:</label>
+    <input type="text" id="surname" name="surname" required><br><br>
 
-  <div id="formularz">
-    <!-- Automatycznie wygenerowane akcje -->
-  </div>
+    <label for="uid">UID:</label>
+    <input type="text" id="uid" name="uid" maxlength="11" pattern="\d{11}" placeholder="999999" required><br><br>
 
-  <button onclick="policzPremie()">Oblicz premię i wyślij</button>
+    <!-- Cennik -->
+<div id="akcje"></div>
+
+    <!-- Przycisk "Oblicz premię" poniżej kalkulatora -->
+  </form>
+
+  <button type="button" onclick="policzPremie()">Oblicz premię</button>
 </div>
 
 <script>
-// Cennik
 const cennik = {
   "Patrol (Screen z dispatcha)": 2000,
   "Reakcja na marka": 5000,
@@ -46,15 +47,13 @@ const cennik = {
   "Udzial w tasku": 5000,
   "Aresztowania": 3000,
   "Pomoc w akademiach itd": 5000,
-  "Porwania, Arenki itp": 7000
+  "Porwania, Arenki itp": 7000,
+  "Złapanie opaski": 7000
 };
 
-// URL webhooka z Google Apps Script
-const webhook = "https://script.google.com/macros/s/AKfycbxU6e9S-3l79JHCfwJy3isGrW-2d43xVTGsAL9hTchWzBycAQ6ih9G5tzU3YYFUkzaMfg/exec";
-
-// Wygeneruj formularz z cennikiem
 const formularz = document.getElementById("formularz");
 
+// Tworzymy pola do wyboru na podstawie cennika
 for (let akcja in cennik) {
   formularz.innerHTML += `
     <div class="akcja">
@@ -64,43 +63,41 @@ for (let akcja in cennik) {
   `;
 }
 
-// Funkcja do obliczenia premii i wysłania do Google Sheets
 function policzPremie() {
   let suma = 0;
-  // Zbieramy dane z formularza
   for (let akcja in cennik) {
     const ilosc = parseInt(document.getElementById(akcja).value) || 0;
     suma += ilosc * cennik[akcja];
   }
 
-  // Zbieramy dane osobowe z formularza
-  const imie = document.getElementById("imie").value;
-  const nazwisko = document.getElementById("nazwisko").value;
-  const uid = document.getElementById("uid").value;
+  // Wyświetlamy wynik w oknie alertu
+  alert(`Łączna premia: ${suma.toLocaleString()} $`);
 
-  // Tworzymy obiekt z danymi do wysłania
-  const dane = {
-    imie: imie,
-    nazwisko: nazwisko,
-    uid: uid,
-    premia: suma
-  };
+  // Wysyłamy dane do Google Sheets
+  const name = document.getElementById('name').value;
+  const surname = document.getElementById('surname').value;
+  const uid = document.getElementById('uid').value;
 
-  // Wysyłamy dane do Google Sheets za pomocą fetch
-  fetch(webhook, {
-    method: "POST",
-    body: JSON.stringify(dane),
-    headers: {
-      "Content-Type": "application/json"
-    }
+  // Przygotowujemy dane do wysłania
+  const formData = new FormData();
+  formData.append('name', name);
+  formData.append('surname', surname);
+  formData.append('uid', uid);
+  formData.append('bonus', suma);
+
+  // Wysyłamy dane do Google Apps Script (tutaj trzeba podać URL)
+  fetch('https://script.google.com/macros/s/AKfycbycF2cObmGSlxavMkO-oFEW1LWRA3YGEebJK_TJF-Vru6igHoW1S8hWhFf3y-aqIhhfSQ/exec', {
+    method: 'POST',
+    body: formData
   })
   .then(response => response.text())
   .then(data => {
-    alert("Dane zostały wysłane do Google Sheets: " + data);
+    console.log(data);
+    alert("Dane zostały zapisane w Google Sheets");
   })
-  .catch(err => {
-    console.error("Błąd:", err);
-    alert("Wystąpił błąd podczas wysyłania danych.");
+  .catch(error => {
+    console.error(error);
+    alert("Wystąpił błąd podczas zapisywania danych");
   });
 }
 </script>
